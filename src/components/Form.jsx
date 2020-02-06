@@ -1,13 +1,17 @@
 import React, { Fragment, useState } from 'react';
+import nanoid from 'nanoid';
 
-const Form = () => {
+const Form = ({ createEvent }) => {
     const [event, setEvent] = useState({
+        _id: '',
         name: '',
         organizer: '',
         date: '',
         time: '',
         details: ''
     });
+
+    const [ error, setError ] = useState(false);
     
     const handleChange = e => {
         setEvent({
@@ -21,12 +25,29 @@ const Form = () => {
     const submitEvent = e => {
         e.preventDefault();
 
-        //submit here
-    }
+        if(name.trim() === '' || organizer.trim() === '' || date.trim() === '' || time.trim() === '' || details.trim() === ''){
+            setError(true);
+            return;
+        }
+
+        event._id = nanoid();
+
+        createEvent(event);
+
+        setEvent({
+            _id: '',
+            name: '',
+            organizer: '',
+            date: '',
+            time: '',
+            details: ''
+        });
+    };
 
     return (
         <Fragment>
             <h2>Create Event</h2>
+            {error ? <p className='alert-error'>Every field is required</p> : null}
             <form
                 onSubmit={submitEvent}
             >
@@ -75,7 +96,7 @@ const Form = () => {
                 ></textarea>
 
                 <button
-                    type='button'
+                    type='submit'
                     className='u-full-width button-primary'
                 >Add Event</button>
             </form>
